@@ -492,3 +492,27 @@ bool ObjectPackConsumer::ParseItem(const std::string &line,
 
   return true;
 }
+
+
+/**
+ * CreateBundle function takes in pathnames, creates a bundle 
+ * and stores it in a temporary folder
+ */
+void CreateBundle(vector<string> & pathnames)
+{
+  // create an Object pack
+
+  // add each file to ObjectPack
+  for(unsigned int i = 0; i<pathnames.size(); i++) {
+    // create bucket
+    
+    // open the file for read using its path
+    
+    // read contents to buffer
+    
+    // if(buffer)
+    // add and commit bucket
+    // need to add hash prefix
+  }
+  // store the bundle in a temporary folder
+}
