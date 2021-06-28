@@ -14,6 +14,7 @@
 #include "util/exception.h"
 #include "util/string.h"
 #include "util_concurrency.h"
+#include "util/posix.h"
 
 using namespace std;  // NOLINT
 
@@ -501,18 +502,49 @@ bool ObjectPackConsumer::ParseItem(const std::string &line,
 void CreateBundle(vector<string> & pathnames)
 {
   // create an Object pack
+  ObjectPack op;
 
   // add each file to ObjectPack
   for(unsigned int i = 0; i<pathnames.size(); i++) {
     // create bucket
+    ObjectPack::BucketHandle bucket_handle = op.NewBucket();
     
     // open the file for read using its path
+    int fd = open ((pathnames[i]).c_str(), O_RDONLY);
+
+    if(fd < 0){
+      // ... panic
+    }
+    else{
+
+      // get file size
+      int64_t file_size = GetFileSize(pathnames[i]); // absolute path
+
+      // allocate buffer
+      void* buffer = malloc (file_size);
     
-    // read contents to buffer
+      // read contents to buffer
+      if (buffer) {
+        // read to buffer
+        read(fd, buffer, file_size);
+        //fread (buffer, 1, file_size, fd);
+
+        // add and commit bucket
+        // need to add hash prefix
+        bucket_handle->name = pathnames[i];
+        ObjectPack::AddToBucket(buffer, file_size, bucket_handle);
     
-    // if(buffer)
-    // add and commit bucket
-    // need to add hash prefix
+        const shash::Any id; // ...
+        //CommitBucket( kNamed, id, bucket_handle, pathnames[i]);
+        // bool ObjectPack::CommitBucket(const BucketContentType type, const shash::Any &id, 
+        //  const ObjectPack::BucketHandle handle, const std::string &name)
+
+        free(buffer);
+      }
+
+      close(fd);
+    }
   }
+
   // store the bundle in a temporary folder
 }
