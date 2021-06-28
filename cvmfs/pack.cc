@@ -545,4 +545,18 @@ void CreateBundle(vector<string> & pathnames)
 
   // store the bundle in a temporary folder
   // string temp_path = CreateTempDir("cvmfs/tmp");
+  // store the bundle in a temporary folder
+  ObjectPackBuild::ObjectPackProducer opp(op);
+  char* content = malloc(total_size);
+  if(content){
+    opp.ProduceNext(total_size, content);
+
+    // write content to storage
+    string content_file = "tempfile";
+    if(!FileExists(content_file)) {
+      // create file
+    }
+
+    free(content);
+  }
 }
