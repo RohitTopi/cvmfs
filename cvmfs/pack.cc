@@ -518,26 +518,23 @@ void CreateBundle(vector<string> & pathnames)
     else{
 
       // get file size
-      int64_t file_size = GetFileSize(pathnames[i]); // absolute path
+      int64_t file_size = GetFileSize(pathnames[i]);
 
       // allocate buffer
       void* buffer = malloc (file_size);
-    
+
       // read contents to buffer
       if (buffer) {
         // read to buffer
-        read(fd, buffer, file_size);
-        //fread (buffer, 1, file_size, fd);
+        SafeRead(fd, buffer, file_size);
 
         // add and commit bucket
         // need to add hash prefix
         bucket_handle->name = pathnames[i];
         ObjectPack::AddToBucket(buffer, file_size, bucket_handle);
-    
+
         const shash::Any id; // ...
         //CommitBucket( kNamed, id, bucket_handle, pathnames[i]);
-        // bool ObjectPack::CommitBucket(const BucketContentType type, const shash::Any &id, 
-        //  const ObjectPack::BucketHandle handle, const std::string &name)
 
         free(buffer);
       }
@@ -547,4 +544,5 @@ void CreateBundle(vector<string> & pathnames)
   }
 
   // store the bundle in a temporary folder
+  // string temp_path = CreateTempDir("cvmfs/tmp");
 }
